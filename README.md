@@ -7,3 +7,4 @@
 
 ## install laravel 
 ## composer install
+## php artisan storage:link
