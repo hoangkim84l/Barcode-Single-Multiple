@@ -36,7 +36,7 @@ class HomeController extends Controller
 
             $dns = '';
             $barcodeType = 'getBarcodePNG';
-            if($request->type == 'QRCODE'){
+            if($request->type == 'QRCODE' || $request->type == 'DATAMATRIX'){
                 settype($line, "string");
                 $dns= 'DNS2D';
                 $height = $request->size * 5;
@@ -54,8 +54,20 @@ class HomeController extends Controller
                         </h3>";
                         return;
                     }
-                    if(strlen($line) < 4){
-                        echo "<h3 style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'>Value must be more than 4 digit<br/><br/>
+                    if((strlen($line) < 11 && $type == "UPCA") || (strlen($line) > 11 && $type == "UPCA")){
+                        echo "<h3 style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'>UPC-A code values must contain 11 digits (without checksum digit)<br/><br/>
+                        <a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a>
+                        </h3>";
+                        return;
+                    }
+                    if((strlen($line) < 4 && $type == "EAN8") || (strlen($line) > 8 && $type == "EAN8")){
+                        echo "<h3 style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'>EAN-8 codes must contain 7 numeric digits<br/><br/>
+                        <a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a>
+                        </h3>";
+                        return;
+                    }
+                    if((strlen($line) < 12 && $type == "EAN13") || strlen($line) > 12 && $type == "EAN13"){
+                        echo "<h3 style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'>EAN-13 code values must contain 12 digits (without checksum digit)<br/><br/>
                         <a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a>
                         </h3>";
                         return;
@@ -78,8 +90,9 @@ class HomeController extends Controller
             array_push($newArr, $imageName);
 
         }
+        
         $pdf = PDF::loadView('barocesheet', ['newArr' => $newArr]);
-
+        $pdf->setPaper($request->pagesize, 'portrait');
         return $pdf->stream('barcodesheet.pdf');
         // return view('barocesheet', ['newArr' => $newArr]);
     }

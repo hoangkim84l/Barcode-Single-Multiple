@@ -36,7 +36,7 @@ Route::get('barcode/{type}&{format}&{showtext}&{size}&{value}',
 
         $dns = '';
         $barcodeType = 'getBarcode'.$format;
-        if($type == 'QRCODE'){
+        if($type == 'QRCODE' || $type == 'DATAMATRIX'){
             $dns= 'DNS2D';
             $height = $size * 5;
             $width = $size * 5;
@@ -85,7 +85,7 @@ Route::post('barcode_sheet',
 
             $dns = '';
             $barcodeType = 'getBarcodePNG';
-            if($request->type == 'QRCODE'){
+            if($request->type == 'QRCODE' || $request->type == 'DATAMATRIX'){
                 settype($line, "string");
                 $dns= 'DNS2D';
                 $height = $request->size * 5;
@@ -101,8 +101,16 @@ Route::post('barcode_sheet',
                         echo "Value must be digit";
                         return;
                     }
-                    if(strlen($line) < 4){
-                        echo "Value must be more than 4 digit";
+                    if((strlen($line) < 11 && $type == "UPCA") || (strlen($line) > 11 && $type == "UPCA")){
+                        echo "<p style='color: red;'>UPC-A code values must contain 11 digits (without checksum digit)</p>";
+                        return;
+                    }
+                    if((strlen($line) < 4 && $type == "EAN8") || (strlen($line) > 8 && $type == "EAN8")){
+                        echo "<p style='color: red;'>EAN-8 codes must contain 7 numeric digits</p>";
+                        return;
+                    }
+                    if((strlen($line) < 12 && $type == "EAN13") || (strlen($line) > 12 && $type == "EAN13")){
+                        echo "<p style='color: red;'>EAN-13 code values must contain 12 digits (without checksum digit)</p>";
                         return;
                     }
                 }

@@ -59,6 +59,7 @@
                                                 <option value="POSTNET" <?php if(isset($_GET['type']) && $_GET['type'] == 'POSTNET'){echo "selected";} ?>>ITF</option>
                                                 <option value="C39" <?php if(isset($_GET['type']) && $_GET['type'] == 'C39'){echo "selected";} ?>>CODE 39</option>
                                                 <option value="C128" <?php if(isset($_GET['type']) && $_GET['type'] == 'C128'){echo "selected";} ?>>CODE 128</option>
+                                                <option value="DATAMATRIX" <?php if(isset($_GET['type']) && $_GET['type'] == 'DATAMATRIX'){echo "selected";} ?>>DATA MATRIX</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -80,7 +81,7 @@
                                             <label for="ImageFormat">Image Format</label>
                                             <select name="format" id="" class="form-control">
                                                 <option value="PNG" <?php if(isset($_GET['format']) && $_GET['format'] == 'PNG'){echo "selected";} ?>>PNG</option>
-                                                <option value="SVG" <?php if(isset($_GET['format']) && $_GET['format'] == 'SVG'){echo "selected";} ?>>SVG</option>
+                                                {{-- <option value="SVG" <?php if(isset($_GET['format']) && $_GET['format'] == 'SVG'){echo "selected";} ?>>SVG</option> --}}
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -107,6 +108,7 @@
                                                 <option value="POSTNET">ITF</option>
                                                 <option value="C39">CODE 39</option>
                                                 <option value="C128">CODE 128</option>
+                                                <option value="DATAMATRIX">DATA MATRIX</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -122,6 +124,14 @@
                                                 <option value="1">Small</option>
                                                 <option value="2">Medium</option>
                                                 <option value="3">Large</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="PageSize">Page Size</label>
+                                            <select name="pagesize" id="" class="form-control">
+                                                <option value="a4">A4</option>
+                                                <option value="a5">A5</option>
+                                                <option value="a6">A6</option>
                                             </select>
                                         </div>
                                         <div class="form-group">
@@ -156,20 +166,27 @@
                                 $barcodeValue = $_GET['barcodeValue'];
                                 $height = 0;
                                 $width = 0;
-
                                 //validate
                                 if($type == "UPCA" || $type == "EAN8" || $type == "EAN13" || $type == "POSTNET"){
-                                    if(is_numeric($barcodeValue) != 1){
-                                        echo "<p style='color: red;'>Value must be digit</p>";
+                                    if((strlen($barcodeValue) < 11 && $type == "UPCA") || (strlen($barcodeValue) > 11 && $type == "UPCA")){
+                                        echo "<p style='color: red;'>UPC-A code values must contain 11 digits (without checksum digit)</p>";
                                         return;
                                     }
-                                    if(strlen($line) < 4){
+                                    if((strlen($barcodeValue) < 4 && $type == "EAN8") || (strlen($barcodeValue) > 8 && $type == "EAN8")){
+                                        echo "<p style='color: red;'>EAN-8 codes must contain 7 numeric digits</p>";
+                                        return;
+                                    }
+                                    if((strlen($barcodeValue) < 12 && $type == "EAN13") || (strlen($barcodeValue) > 12 && $type == "EAN13")){
+                                        echo "<p style='color: red;'>EAN-13 code values must contain 12 digits (without checksum digit)</p>";
+                                        return;
+                                    }
+                                    if(is_numeric($barcodeValue) != 1){
                                         echo "<p style='color: red;'>Value must be digit</p>";
                                         return;
                                     }
                                     $dns = '';
                                     $barcodeType = 'getBarcode'.$format;
-                                    if($type == 'QRCODE'){
+                                    if($type == 'QRCODE' || $type == 'DATAMATRIX'){
                                         $dns= 'DNS2D';
                                         $height = $size * 5;
                                         $width = $size * 5;
@@ -197,7 +214,7 @@
                                 else{
                                     $dns = '';
                                     $barcodeType = 'getBarcode'.$format;
-                                    if($type == 'QRCODE'){
+                                    if($type == 'QRCODE' || $type == 'DATAMATRIX'){
                                         $dns= 'DNS2D';
                                         $height = $size * 5;
                                         $width = $size * 5;
@@ -229,24 +246,6 @@
                         <?php 
                             }
                         ?>
-                       {{-- <img src="data:image/png;base64,{{DNS2D::getBarcodePNG('12311', 'QRCODE', 2,30,array(2,3,4), true)}}" alt="barcode"><br/> --}}
-                         {{-- <img src="data:image/png;base64,{{DNS1D::getBarcodePNG('13', 'C39E')}}" alt="barcode" /><br/>
-                        <img src="data:image/png;base64,{{DNS1D::getBarcodePNG('14', 'C39E+')}}" alt="barcode" /><br/>
-                        <img src="data:image/png;base64,{{DNS1D::getBarcodePNG('15', 'C93', 3,40,array(2,3,4), true)}}" alt="barcode" /> --}}
-                        <br/>
-                        <br/>
-                        {{-- <img src="data:image/png;base64,{{DNS1D::getBarcodePNG('19', 'S25')}}" alt="barcode" />
-                        <img src="data:image/png;base64,{{DNS1D::getBarcodePNG('20', 'S25+')}}" alt="barcode" />
-                        <img src="data:image/png;base64,{{DNS1D::getBarcodePNG('21', 'I25')}}" alt="barcode" />
-                        <img src="data:image/png;base64,{{DNS1D::getBarcodePNG('22', 'MSI+')}}" alt="barcode" />
-                        <img src="data:image/png;base64,{{DNS1D::getBarcodePNG('23', 'POSTNET')}}" alt="barcode" />
-                        <br/>
-                        <br/>
-                        <br/>
-                        <br/>
-                        <img src="data:image/png;base64,{{DNS2D::getBarcodePNG('16', 'QRCODE')}}" alt="barcode" />
-                        <img src="data:image/png;base64,{{DNS2D::getBarcodePNG('17', 'PDF417')}}" alt="barcode" />
-                        <img src="data:image/png;base64,{{DNS2D::getBarcodePNG('18', 'DATAMATRIX')}}" alt="barcode" /> --}}
                     </div>
                 </div>
             </div>    
