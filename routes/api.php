@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+// use BarcodeValidator;
 
 
 /*
@@ -36,6 +37,43 @@ Route::get('barcode/{type}&{format}&{showtext}&{size}&{value}',
 
         $dns = '';
         $barcodeType = 'getBarcode'.$format;
+        //validate
+        if ($type == "UPCA" || $type == "EAN8" || $type == "EAN13" || $type == "POSTNET") {
+            if (is_numeric($value) != 1) {
+                echo "Value must be digit";
+                return;
+            }
+            if ($type == "EAN8") {
+                if ((strlen($value) < 4 && $type == "EAN8") || (strlen($value) > 8 && $type == "EAN8")) {
+                    echo "EAN-8 codes must contain 8 numeric digits";
+                    return;
+                }
+                if (BarcodeValidator::IsValidEAN8($value) == false) {
+                    echo "Something wrong.\n Detail https://www.gs1.org/standards/barcodes/ean-upc";
+                    return;
+                }
+            }
+            if ($type == "UPCA") {
+                if ((strlen($value) < 11 && $type == "UPCA") || (strlen($value) > 12 && $type == "UPCA")) {
+                    echo "UPC-A code values must contain 12 digits (without checksum digit)";
+                    return;
+                }
+                if (BarcodeValidator::IsValidUPCA($value) == false) {
+                    echo "Something wrong.\n Detail https://www.gs1.org/standards/barcodes/ean-upc";
+                    return;
+                }
+            }
+            if ($type == "EAN13") {
+                if ((strlen($value) < 12 && $type == "EAN13") || (strlen($value) > 13 && $type == "EAN13")) {
+                    echo "EAN-13 code values must contain 13 digits (without checksum digit)";
+                    return;
+                }
+                if (BarcodeValidator::IsValidEAN13($value) == false) {
+                    echo "Something wrong.\n Detail https://www.gs1.org/standards/barcodes/ean-upc";
+                    return;
+                }
+            }
+        }
         if($type == 'QRCODE' || $type == 'DATAMATRIX'){
             $dns= 'DNS2D';
             $height = $size * 5;
@@ -101,17 +139,35 @@ Route::post('barcode_sheet',
                         echo "Value must be digit";
                         return;
                     }
-                    if((strlen($line) < 11 && $type == "UPCA") || (strlen($line) > 11 && $type == "UPCA")){
-                        echo "<p style='color: red;'>UPC-A code values must contain 11 digits (without checksum digit)</p>";
-                        return;
+                    if($type == "UPCA"){
+                        if((strlen($line) < 11 && $type == "UPCA") || (strlen($line) > 12 && $type == "UPCA")){
+                            echo "UPC-A code values must contain 12 digits (without checksum digit)";
+                            return;
+                        }
+                        if(BarcodeValidator::IsValidUPCA($line) == false){
+                            echo "Something wrong.\n Detail https://www.gs1.org/standards/barcodes/ean-upc";
+                            return;
+                        }
                     }
-                    if((strlen($line) < 4 && $type == "EAN8") || (strlen($line) > 8 && $type == "EAN8")){
-                        echo "<p style='color: red;'>EAN-8 codes must contain 7 numeric digits</p>";
-                        return;
+                    if($type=="EAN8"){
+                        if((strlen($line) < 4 && $type == "EAN8") || (strlen($line) > 8 && $type == "EAN8")){
+                            echo "EAN-8 codes must contain 8 numeric digits";
+                            return;
+                        }
+                        if(BarcodeValidator::IsValidEAN8($line) == false){
+                            echo "Something wrong.\n Detail https://www.gs1.org/standards/barcodes/ean-upc\n";
+                            return;
+                        }
                     }
-                    if((strlen($line) < 12 && $type == "EAN13") || (strlen($line) > 12 && $type == "EAN13")){
-                        echo "<p style='color: red;'>EAN-13 code values must contain 12 digits (without checksum digit)</p>";
-                        return;
+                    if($type == "EAN13"){
+                        if((strlen($line) < 12 && $type == "EAN13") || strlen($line) > 13 && $type == "EAN13"){
+                            echo "EAN-13 code values must contain 13 digits (without checksum digit)";
+                            return;
+                        }
+                        if(BarcodeValidator::IsValidEAN13($line) == false){
+                            echo "Something wrong.\n Detail https://www.gs1.org/standards/barcodes/ean-upc";
+                            return;
+                        }
                     }
                 }
             }

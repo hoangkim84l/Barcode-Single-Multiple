@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use PDF;
 use URL;
+use BarcodeValidator;
 
 class HomeController extends Controller
 {
@@ -54,24 +55,43 @@ class HomeController extends Controller
                         </h3>";
                         return;
                     }
-                    if((strlen($line) < 11 && $type == "UPCA") || (strlen($line) > 11 && $type == "UPCA")){
-                        echo "<h3 style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'>UPC-A code values must contain 11 digits (without checksum digit)<br/><br/>
-                        <a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a>
-                        </h3>";
-                        return;
+                    if($type == "UPCA"){
+                        if((strlen($line) < 11 && $type == "UPCA") || (strlen($line) > 12 && $type == "UPCA")){
+                            echo "<h3 style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'>UPC-A code values must contain 12 digits (without checksum digit)<br/><br/>
+                            <a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a>
+                            </h3>";
+                            return;
+                        }
+                        if(BarcodeValidator::IsValidUPCA($line) == false){
+                            echo "<div style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'><h3>Something wrong</h3>.<br/>Detail <a href='https://www.gs1.org/standards/barcodes/ean-upc'>here</a><br/><a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a></div>";
+                            return;
+                        }
                     }
-                    if((strlen($line) < 4 && $type == "EAN8") || (strlen($line) > 8 && $type == "EAN8")){
-                        echo "<h3 style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'>EAN-8 codes must contain 7 numeric digits<br/><br/>
-                        <a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a>
-                        </h3>";
-                        return;
+                    if($type=="EAN8"){
+                        if((strlen($line) < 4 && $type == "EAN8") || (strlen($line) > 8 && $type == "EAN8")){
+                            echo "<h3 style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'>EAN-8 codes must contain 8 numeric digits<br/><br/>
+                            <a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a>
+                            </h3>";
+                            return;
+                        }
+                        if(BarcodeValidator::IsValidEAN8($line) == false){
+                            echo "<div style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'><h3>Something wrong</h3>.<br/> Detail <a href='https://www.gs1.org/standards/barcodes/ean-upc'>here</a><br/><a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a></div>";
+                            return;
+                        }
                     }
-                    if((strlen($line) < 12 && $type == "EAN13") || strlen($line) > 12 && $type == "EAN13"){
-                        echo "<h3 style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'>EAN-13 code values must contain 12 digits (without checksum digit)<br/><br/>
-                        <a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a>
-                        </h3>";
-                        return;
+                    if($type == "EAN13"){
+                        if((strlen($line) < 12 && $type == "EAN13") || strlen($line) > 13 && $type == "EAN13"){
+                            echo "<h3 style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'>EAN-13 code values must contain 13 digits (without checksum digit)<br/><br/>
+                            <a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a>
+                            </h3>";
+                            return;
+                        }
+                        if(BarcodeValidator::IsValidEAN13($line) == false){
+                            echo "<div style='padding: 50px;color: red; width:300px; height: 300px; margin: 0 auto;'><h3>Something wrong</h3>.<br/> Detail <a href='https://www.gs1.org/standards/barcodes/ean-upc'>here</a><br/><a href='".URL::previous()."' style='width:300px; height: 300px; margin: 0 auto;'>Back</a></div>";
+                            return;
+                        }
                     }
+                    
                 }
             }
             if($showtext == 'true'){

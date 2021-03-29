@@ -3,6 +3,8 @@
 
 @section('content')
     <h2>Generator Barcode</h2>
+	<?php $code = '90311017';
+	echo 'Is IMEI code "'.$code.'" valid? '. (BarcodeValidator::IsValidEAN8($code) ? 'true' : 'false'). '<br>';?>
     <img src="data:image/jpg;base64,{{DNS1D::getBarcodePNG('test', 'C128', 2,60,array(2,3,4), true)}}" alt="barcode" /><br/>
 	<img src="data:image/png;base64,{{DNS1D::getBarcodePNG('12', 'C39+')}}" alt="barcode" /><br/>
 	<img src="data:image/png;base64,{{DNS1D::getBarcodePNG('13', 'C39E')}}" alt="barcode" /><br/>

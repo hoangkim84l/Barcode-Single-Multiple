@@ -166,6 +166,7 @@ return [
          */
         Milon\Barcode\BarcodeServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        //  Imelgrat\BarcodeValidator\BarcodeValidator::class,
         /*
          * Application Service Providers...
          */
@@ -231,6 +232,8 @@ return [
         'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
         //PDF
         'PDF' => Barryvdh\DomPDF\Facades::class,
+        //Validation barcode
+        // BarcodeValidator => Imelgrat\BarcodeValidator\BarcodeValidator::class,
     ],
 
 ];
