@@ -3,7 +3,6 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                
                 <h2>User: {{ Auth::user()->name}}</h2>
                 <input type="text" class="form-control" id="myInput" onkeyup="myFunction()" placeholder="Search for date day-month-year" title="Type in a date">
                 <table class="table" id="myBarcode">
@@ -24,11 +23,10 @@
                         @endforeach
                     </tbody>
                 </table>
-
-
-
-                
             </div>
+             <div class="col-lg-12">
+                <div class="pagination"> {{ $listBarcode->links() }} </div>
+             </div>
         </div>
     </div>
 <script>
