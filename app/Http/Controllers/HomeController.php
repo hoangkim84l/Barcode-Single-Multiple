@@ -260,6 +260,13 @@ class HomeController extends Controller
 
             Storage::disk('public')->put($imageName, base64_decode($image));
             array_push($newArr, $imageName);
+            if (Auth::check()) {
+                $user_id = Auth::user()->id;
+                $barcode_store = new Barcode();
+                $barcode_store->id_user = $user_id;
+                $barcode_store->barcode = $imageName;
+                $barcode_store->save();
+            }
 
         }
         

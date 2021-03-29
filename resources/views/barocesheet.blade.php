@@ -1,7 +1,7 @@
 
-@extends('layouts.app')
+{{-- @extends('layouts.app') --}}
 
-@section('content')
+{{-- @section('content') --}}
     <h2>Generator Barcode Sheet</h2>
 	<br/>
 	<br>
@@ -26,4 +26,4 @@
 	<img src="data:image/png;base64,{{DNS2D::getBarcodePNG('16', 'QRCODE')}}" alt="barcode" />
 	<img src="data:image/png;base64,{{DNS2D::getBarcodePNG('17', 'PDF417')}}" alt="barcode" />
 	<img src="data:image/png;base64,{{DNS2D::getBarcodePNG('18', 'DATAMATRIX')}}" alt="barcode" /> --}}
-@endsection
+{{-- @endsection --}}
