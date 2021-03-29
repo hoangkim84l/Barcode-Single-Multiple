@@ -15,6 +15,22 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'HomeController@formview');
 
-Route::get('barcode-web', 'HomeController@barcode');
-
 Route::post('barocesheet', 'HomeController@barcodeSheet');
+
+Route::get('barcode-web', [
+                'as' => 'barcode-web',
+                'uses' => 'HomeController@barcode'
+                ]);
+Route::post('barcode',[
+    'as' => 'barcode',
+    'uses' => 'HomeController@postBarcode'
+]);
+
+//lấy danh sách barcode 
+Route::get('listbarcode',[
+    'as' => 'listbarcode',
+    'uses' => 'HomeController@getListBarcode'
+]);
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Auth::routes();

@@ -78,8 +78,11 @@
     'normal' => $rootDir . '/lib/fonts/DejaVuSerif',
   ),
   'nunito' => array(
-    'normal' => $fontDir . '/nunito_normal_46b9b3b48cc3ddbae60da82f1c1c5d29',
+    'normal' => $fontDir . '/nunito_normal_7173294b894229c46ad1835001660d90',
     '600' => $fontDir . '/nunito_600_0f08625611c8a9cf8d1f0e5a4e3b8e39',
     'bold' => $fontDir . '/nunito_bold_23f6d1b3589b1fb8a1a0052cb8778ab4',
+  ),
+  'glyphicons halflings' => array(
+    'normal' => $fontDir . '/glyphicons_halflings_normal_91a063d0f3772b152f606edc0383c99d',
   ),
 ) ?>
